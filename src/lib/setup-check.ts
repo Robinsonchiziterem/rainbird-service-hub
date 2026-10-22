@@ -3,6 +3,7 @@ import "server-only";
 import { PHOTO_RULES } from "@/lib/constants";
 import { MissingEnvError } from "@/lib/env.public";
 import { getServerEnv } from "@/lib/env.server";
+import { staffEmailConfig } from "@/lib/staff-email";
 import { getAdminSupabase } from "@/lib/supabase/admin";
 import { getPublicSupabase } from "@/lib/supabase/public";
 
@@ -12,6 +13,8 @@ export type SetupCheck = {
   ok: boolean;
   detail: string;
   fix?: string;
+  /** Optional extras never make the overall check fail. */
+  optional?: boolean;
 };
 
 // Runs a short list of checks that confirm Phase 1 setup worked.
@@ -148,6 +151,23 @@ export async function runSetupChecks(): Promise<SetupCheck[]> {
       fix: ok
         ? undefined
         : "Create demo.staff@example.com in Authentication > Users, then re-run 0004_engineers_and_staff.sql.",
+    });
+  }
+
+  // 8. Optional: email alerts to staff for new requests
+  {
+    const email = staffEmailConfig();
+    checks.push({
+      id: "email",
+      label: "Email alerts to staff (optional)",
+      ok: email.enabled,
+      optional: true,
+      detail: email.enabled
+        ? `New requests are emailed to ${email.to.length} address(es).`
+        : "Not set up. New requests only appear in the staff dashboard.",
+      fix: email.enabled
+        ? undefined
+        : "Add RESEND_API_KEY and STAFF_NOTIFY_EMAIL (see README, 'Email alerts'), then redeploy.",
     });
   }
 

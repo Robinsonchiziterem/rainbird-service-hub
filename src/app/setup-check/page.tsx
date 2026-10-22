@@ -17,7 +17,7 @@ export default async function SetupCheckPage() {
     failedToRun = true;
   }
 
-  const allOk = !failedToRun && checks.length > 0 && checks.every((c) => c.ok);
+  const allOk = !failedToRun && checks.length > 0 && checks.every((c) => c.ok || c.optional);
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -47,15 +47,15 @@ export default async function SetupCheckPage() {
                 <span
                   aria-hidden="true"
                   className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white ${
-                    check.ok ? "bg-teal-600" : "bg-red-700"
+                    check.ok ? "bg-teal-600" : check.optional ? "bg-slate-500" : "bg-red-700"
                   }`}
                 >
-                  {check.ok ? "✓" : "!"}
+                  {check.ok ? "✓" : check.optional ? "–" : "!"}
                 </span>
                 <div className="min-w-0">
                   <p className="font-semibold">
                     {check.label}
-                    <span className="sr-only">{check.ok ? ": passed" : ": needs attention"}</span>
+                    <span className="sr-only">{check.ok ? ": passed" : check.optional ? ": optional, not set up" : ": needs attention"}</span>
                   </p>
                   <p className="mt-1 break-words text-sm text-muted">{check.detail}</p>
                   {check.fix && (

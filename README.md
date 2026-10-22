@@ -156,13 +156,28 @@ If you change environment variables later, go to **Deployments**, click the thre
 
 ---
 
+## Email alerts for new requests (optional)
+
+Every new quote or service request can be emailed to staff, with all the details and a button that opens it in the dashboard. Critical and high urgency faults say so in the subject line. If email is not set up, or an email fails, nothing breaks: the request is still saved and shows in `/staff`.
+
+1. Sign up free at **resend.com**. Use the email address that should **receive** the alerts. Without your own domain, Resend can only deliver to the address you signed up with.
+2. In Resend, go to **API Keys > Create API Key**, give it "Sending access", and copy it (it starts with `re_`).
+3. In Vercel, **Settings > Environment Variables**, add:
+   - `RESEND_API_KEY` = your key (type **Secret**)
+   - `STAFF_NOTIFY_EMAIL` = the email that receives alerts
+4. Redeploy. `/setup-check` shows "Email alerts to staff" ticked.
+
+To email other addresses too, add a domain you own in Resend (**Domains > Add domain**), then set `STAFF_EMAIL_FROM` to something like `Rain Bird Service Hub <alerts@yourdomain.com>` and list several addresses in `STAFF_NOTIFY_EMAIL`, separated by commas.
+
+Customers are still not emailed. Their messages stay simulated in the notifications log.
+
 ## Automated tests
 
 ```bash
 npm test
 ```
 
-This runs 90 tests covering form validation, reference numbers, phone number handling, the tracking timeline, the public API routes (including rate limits and the "same answer for a wrong contact or a missing reference" rule), and the staff dashboard helpers. No database is needed: the routes are tested with stand-in data.
+This runs 99 tests covering form validation, reference numbers, phone number handling, the tracking timeline, the public API routes (including rate limits and the "same answer for a wrong contact or a missing reference" rule), and the staff dashboard helpers. No database is needed: the routes are tested with stand-in data.
 
 The database security rules have their own tests in `supabase/tests/`. These are for developers with a local PostgreSQL installation. **Do not run them in your Supabase project**, because they create fake users.
 

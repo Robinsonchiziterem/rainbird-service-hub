@@ -4,7 +4,7 @@ This is a hackathon prototype. Here is what it does not do, stated plainly.
 
 ## By design (agreed scope)
 
-1. **No real messages are sent.** Email and WhatsApp messages are written to the `notifications_log` table and shown on the staff page, but nothing leaves the system. A real version would connect an email service and the WhatsApp Business API.
+1. **Customers get no real messages.** Customer email and WhatsApp updates are written to the `notifications_log` table and shown on the staff page, but not sent. Staff *can* get real email alerts for new requests (optional, via Resend). On Resend's free plan without your own domain, those alerts can only go to the email address the Resend account was created with. A real version would add a verified domain and the WhatsApp Business API.
 2. **Not connected to Rain Bird Nigeria.** It does not use their logo, data, prices, stock or staff. All names, companies and phone numbers in the demo data are invented.
 3. **Customers have no accounts.** They track one request at a time with a reference number and their email or phone. They cannot see a list of their past requests.
 4. **No quotes or prices.** The quote form collects the information an engineer needs. Writing and sending the actual quote happens outside the system.

@@ -1,6 +1,8 @@
 import { MESSAGES, clientIp, fail, isSameOrigin, ok, readJson } from "@/lib/http";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { queueStaffEmail } from "@/lib/staff-email";
 import { saveRequest } from "@/lib/submissions";
+import { quoteSummary } from "@/lib/summaries";
 import { fieldErrors } from "@/lib/validation/common";
 import { quoteSchema } from "@/lib/validation/quote";
 
@@ -23,7 +25,7 @@ export async function POST(request: Request) {
 
   const d = parsed.data;
   try {
-    const { reference } = await saveRequest({
+    const { id, reference } = await saveRequest({
       type: "quote",
       full_name: d.full_name,
       company: d.company,
@@ -37,6 +39,15 @@ export async function POST(request: Request) {
       daily_water_need: d.daily_water_need,
       preferred_timeline: d.preferred_timeline,
       notes: d.notes,
+    });
+    // Email staff in the background (only if email alerts are set up).
+    queueStaffEmail({
+      reference,
+      type: "quote",
+      urgency: "normal",
+      topic: d.product_area,
+      summary: quoteSummary(d),
+      detailUrl: `${new URL(request.url).origin}/staff/requests/${id}`,
     });
     return ok({ reference }, 201);
   } catch {

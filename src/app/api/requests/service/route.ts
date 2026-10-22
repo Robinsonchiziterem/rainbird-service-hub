@@ -1,6 +1,8 @@
 import { MESSAGES, clientIp, fail, isSameOrigin, ok, readJson } from "@/lib/http";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { queueStaffEmail } from "@/lib/staff-email";
 import { saveRequest } from "@/lib/submissions";
+import { serviceSummary } from "@/lib/summaries";
 import { fieldErrors } from "@/lib/validation/common";
 import { serviceSchema } from "@/lib/validation/service";
 
@@ -37,6 +39,16 @@ export async function POST(request: Request) {
       equipment_or_site: d.equipment_or_site,
       issue_type: d.issue_type,
       description: d.description,
+    });
+    // Email staff in the background (only if email alerts are set up).
+    // Photos upload a moment later, so the email links to the request page.
+    queueStaffEmail({
+      reference,
+      type: "service",
+      urgency: d.urgency,
+      topic: d.issue_type,
+      summary: serviceSummary(d),
+      detailUrl: `${new URL(request.url).origin}/staff/requests/${id}`,
     });
     return ok({ reference, uploadId: id }, 201);
   } catch {

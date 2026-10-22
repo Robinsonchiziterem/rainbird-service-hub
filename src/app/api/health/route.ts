@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const checks = await runSetupChecks();
-    const ok = checks.every((c) => c.ok);
+    const ok = checks.every((c) => c.ok || c.optional);
     return NextResponse.json({ ok, checks }, { status: ok ? 200 : 503 });
   } catch {
     return NextResponse.json(
