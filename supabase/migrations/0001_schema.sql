@@ -481,23 +481,19 @@ as $$
   );
 $$;
 
-drop trigger if exists requests_before_insert on public.requests;
-create trigger requests_before_insert
+create or replace trigger requests_before_insert
   before insert on public.requests
   for each row execute function public.requests_before_insert();
 
-drop trigger if exists requests_after_insert on public.requests;
-create trigger requests_after_insert
+create or replace trigger requests_after_insert
   after insert on public.requests
   for each row execute function public.requests_after_insert();
 
-drop trigger if exists requests_before_update on public.requests;
-create trigger requests_before_update
+create or replace trigger requests_before_update
   before update on public.requests
   for each row execute function public.requests_before_update();
 
-drop trigger if exists requests_after_status_change on public.requests;
-create trigger requests_after_status_change
+create or replace trigger requests_after_status_change
   after update of status on public.requests
   for each row
   when (old.status is distinct from new.status)
