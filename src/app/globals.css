@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+/* Brand colours: deep water blue, engineering teal, clean neutrals.
+   All text/background pairs used in the app meet WCAG AA contrast. */
+@theme {
+  --color-brand-50: #eef6fb;
+  --color-brand-100: #d6e9f5;
+  --color-brand-200: #aed3eb;
+  --color-brand-500: #1f6fa8;
+  --color-brand-600: #155a8c;
+  --color-brand-700: #0f4a75;
+  --color-brand-800: #0b3a5c;
+  --color-brand-900: #082a43;
+
+  --color-teal-50: #ecf8f6;
+  --color-teal-100: #cfeee9;
+  --color-teal-500: #13897a;
+  --color-teal-600: #0e7366;
+  --color-teal-700: #0b5c52;
+
+  --color-ink: #13212e;
+  --color-muted: #4b5b6a;
+  --color-line: #d9e2ea;
+  --color-surface: #f6f9fb;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+/* A clear, consistent keyboard focus ring everywhere. */
+:focus-visible {
+  outline: 3px solid var(--color-teal-500);
+  outline-offset: 2px;
+}
+
+/* Respect people who turn off animations. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Pipe tracker: water fills each pipe section in turn, once, on load.
+   Vertical on phones, horizontal from the "sm" breakpoint. */
+@keyframes pipe-fill-y {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+@keyframes pipe-fill-x {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.pipe-water {
+  transform-origin: top;
+  animation: pipe-fill-y 0.45s ease-out both;
+}
+@media (min-width: 40rem) {
+  .pipe-water {
+    transform-origin: left;
+    animation-name: pipe-fill-x;
+  }
+}
+
+/* The current stage "drips" gently so the eye finds it. */
+@keyframes pipe-drop {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.7); opacity: 0.7; }
+}
+.pipe-drop {
+  animation: pipe-drop 2.4s ease-in-out infinite;
+}
+
+/* Numbers in references and counters line up neatly. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
